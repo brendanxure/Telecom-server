@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs')
 const User = require('../Model/User')
+const jwt = require('jsonwebtoken')
 
 
 //SIGN UP/REGISTER/CREATE A NEW ACCOUNT
@@ -7,8 +8,13 @@ const User = require('../Model/User')
 const Register = async(req, res)=> {
     const {username, email, phonenumber, address, password, referral} = req.body
 
+
     if(!username || !email || !phonenumber || !address || !password) {
         res.json('Please fill input completely')
+    }
+
+    if(referral === username) {
+        res.status(400).json(`You can't be your referral`)
     }
 
     // If Email Already exist
@@ -35,12 +41,12 @@ const Register = async(req, res)=> {
 
     //Create User
     const newUser = await User.create({
-        username: username,
-        email: email,
+        username: username.trim(),
+        email: email.trim(),
         password: hashedPassword,
-        phonenumber: phonenumber,
-        address: address,
-        referral: referral
+        phonenumber: phonenumber.trim(),
+        address: address.trim(),
+        referral: referral.trim()
     }) 
 
     try {
@@ -61,7 +67,7 @@ const Login = async (req, res) => {
     }
 
     // Incorrect Email
-    const user = await User.findOne({email: email})
+    const user = await User.findOne({email: email.trim()})
     if (!user) {
         res.status(400).json('Email not registered')
     }
@@ -70,13 +76,15 @@ const Login = async (req, res) => {
     
 
     if (user && userPassword) {
-        res.status(200).json({
-            email: user.email,
-            password: user.password 
-        })
+        const {password, phonenumber, address, ...others } = user._doc
+        res.status(200).json({...others, accessToken: generateToken(user._id, user.isAdmin)})
     } else {
-        res.json('Incorrect Password')
+        res.status(400).json('Incorrect Password')
     }
+}
+
+const generateToken = (id, admin) => {
+    return jwt.sign({id, admin}, process.env.JWT_SECRET, {expiresIn: '7d'})
 }
 
 module.exports = {
