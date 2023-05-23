@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken')
 const walletController = require('../Controller/WalletController')
 const walletService = require('../Service/WalletService')
 const Wallet = require('../Model/Wallet')
+const { json } = require('express')
 
 //SIGN UP/REGISTER/CREATE A NEW ACCOUNT
 
@@ -59,7 +60,6 @@ const Register = async (req, res) => {
         referral: referral.trim()
     })
 
-    console.log(newUser._id)
     // Create wallet for the user
     const wallet = await walletService.createWallet(newUser._id);
 
@@ -98,10 +98,12 @@ const Login = async (req, res) => {
 
     if (user && userPassword) {
 
+        console.log((user._id));
         // Get Wallet Details
-        const wallet = walletService.findWalletByUser(user._id);
+        const wallet = await walletService.findWalletByUser(user._id);
+
         const { password, phonenumber, address, ...others } = user._doc
-        res.status(200).json({ ...others, accessToken: generateToken(user._id, user.isAdmin), walletBalance: wallet.balance })
+        res.status(200).json({ ...others, walletBalance: wallet.balance, accessToken: generateToken(user._id, user.isAdmin) })
     } else {
         res.status(400).json('Incorrect Password')
     }
