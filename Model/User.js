@@ -22,7 +22,6 @@ const UserSchema = mongoose.Schema({
     },
     address: {
         type: String, 
-        required: [true, 'Please input address']
     },
     referral: {
         type: String,

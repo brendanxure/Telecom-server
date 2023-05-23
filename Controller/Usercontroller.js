@@ -1,36 +1,46 @@
 const bcrypt = require('bcryptjs')
 const User = require('../Model/User')
 const jwt = require('jsonwebtoken')
-
+const walletController = require('../Controller/WalletController')
+const walletService = require('../Service/WalletService')
+const Wallet = require('../Model/Wallet')
 
 //SIGN UP/REGISTER/CREATE A NEW ACCOUNT
 
-const Register = async(req, res)=> {
-    const {username, email, phonenumber, address, password, referral} = req.body
+const Register = async (req, res) => {
+    const { username, email, phonenumber, address, password, referral } = req.body
 
-
-    if(!username || !email || !phonenumber || !address || !password) {
-        res.json('Please fill input completely')
+    if (!username) {
+        res.status(400).json('Username required')
+    }
+    if (!email) {
+        res.status(400).json('Email required')
+    }
+    if (!phonenumber) {
+        res.status(400).json('Phonenumber required')
+    }
+    if (!password) {
+        res.status(400).json('Password required')
     }
 
-    if(referral === username) {
+    if (referral === username) {
         res.status(400).json(`You can't be your referral`)
     }
 
     // If Email Already exist
-    const usedEmail = await User.findOne({email: email}) 
+    const usedEmail = await User.findOne({ email: email })
     if (usedEmail) {
         res.status(400).json('Email already exist')
     }
 
     // if Username Already Exist
-    const usedUsername = await User.findOne({username: username})
+    const usedUsername = await User.findOne({ username: username })
     if (usedUsername) {
         res.status(400).json('Username already exist')
     }
 
     // if Phonenumber Already Exist
-    const usedPhonenumber = await User.findOne({phonenumber: phonenumber})
+    const usedPhonenumber = await User.findOne({ phonenumber: phonenumber })
     if (usedPhonenumber) {
         res.status(400).json('Phonenumber already exist')
     }
@@ -47,10 +57,21 @@ const Register = async(req, res)=> {
         phonenumber: phonenumber.trim(),
         address: address.trim(),
         referral: referral.trim()
-    }) 
+    })
+
+    console.log(newUser._id)
+    // Create wallet for the user
+    const wallet = await walletService.createWallet(newUser._id);
+
+    const response = {
+        username: newUser.username,
+        email: newUser.email,
+        phonenumber: newUser.phonenumber,
+        wallet: wallet.balance,
+    }
 
     try {
-        res.status(200).json(newUser)
+        res.status(200).json(response)
     } catch (error) {
         res.status(400).json(error)
     }
@@ -59,7 +80,8 @@ const Register = async(req, res)=> {
 // LOGIN
 
 const Login = async (req, res) => {
-    const {email, password} = req.body
+
+    const { email, password } = req.body
 
     //Input no completely filled
     if (!email || !password) {
@@ -67,24 +89,26 @@ const Login = async (req, res) => {
     }
 
     // Incorrect Email
-    const user = await User.findOne({email: email.trim()})
+    const user = await User.findOne({ email: email.trim() })
     if (!user) {
         res.status(400).json('Email not registered')
     }
-    
+
     const userPassword = await bcrypt.compare(password, user.password)
-    
 
     if (user && userPassword) {
-        const {password, phonenumber, address, ...others } = user._doc
-        res.status(200).json({...others, accessToken: generateToken(user._id, user.isAdmin)})
+
+        // Get Wallet Details
+        const wallet = walletService.findWalletByUser(user._id);
+        const { password, phonenumber, address, ...others } = user._doc
+        res.status(200).json({ ...others, accessToken: generateToken(user._id, user.isAdmin), walletBalance: wallet.balance })
     } else {
         res.status(400).json('Incorrect Password')
     }
 }
 
 const generateToken = (id, admin) => {
-    return jwt.sign({id, admin}, process.env.JWT_SECRET, {expiresIn: '7d'})
+    return jwt.sign({ id, admin }, process.env.JWT_SECRET, { expiresIn: '7d' })
 }
 
 module.exports = {
