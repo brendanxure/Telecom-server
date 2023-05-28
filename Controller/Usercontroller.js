@@ -1,9 +1,7 @@
 const bcrypt = require('bcryptjs')
 const User = require('../Model/User')
 const jwt = require('jsonwebtoken')
-const walletController = require('../Controller/WalletController')
 const walletService = require('../Service/WalletService')
-const Wallet = require('../Model/Wallet')
 const { json } = require('express')
 
 //SIGN UP/REGISTER/CREATE A NEW ACCOUNT
@@ -98,7 +96,6 @@ const Login = async (req, res) => {
 
     if (user && userPassword) {
 
-        console.log((user._id));
         // Get Wallet Details
         const wallet = await walletService.findWalletByUser(user._id);
 

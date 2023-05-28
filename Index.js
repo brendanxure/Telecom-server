@@ -9,9 +9,10 @@ const app = express()
 DBConnect()
 
 app.use(express.json())
-app.use(express.urlencoded({extended: false}))
+app.use(express.urlencoded({ extended: false }))
 app.use(cors())
 
 app.use(('/user'), require('./Route/Userroute'))
+app.use(('/api/wallet'), require('./Route/Walletroute'))
 
-app.listen(port, ()=> console.log(`server is running on port ${port}`))
+app.listen(port, () => console.log(`server is running on port ${port}`))
