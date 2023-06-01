@@ -14,5 +14,6 @@ app.use(cors())
 
 app.use(('/user'), require('./Route/Userroute'))
 app.use(('/api/wallet'), require('./Route/Walletroute'))
+app.use(('/api/paystack'), require('./Route/Paymentroute'))
 
 app.listen(port, () => console.log(`server is running on port ${port}`))

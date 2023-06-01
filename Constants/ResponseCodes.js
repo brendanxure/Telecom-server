@@ -7,3 +7,11 @@ exports.responsecodes = {
     FORBIDDEN: 403,
     UNAUTHORIZED: 401,
 }
+
+exports.paymentstatus = {
+    COMPLETE: 'complete',
+    PENDING: 'pending',
+    FAILED: 'failed',
+}
+
+
