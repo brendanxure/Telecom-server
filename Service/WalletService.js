@@ -25,14 +25,8 @@ const fundWallet = async (userId, amount) => {
         if (!wallet) {
             return { success: false, message: 'Wallet not found', code: responsecodes.NOT_FOUND };
         }
-
-        // Increase the wallet balance
         wallet.balance += amount;
-
-        // Save the wallet
         await wallet.save();
-
-        // Create a new transaction history record
         await createWalletHistory(wallet._id, 'Funding', amount);
         return { success: true, message: 'Wallet funded successfully', code: responsecodes.SUCCESS, wallet };
     }

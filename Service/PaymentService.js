@@ -1,5 +1,6 @@
 const uuid = require('uuid');
-const Payment = require('../Model/FundWalletPayment')
+const FundWalletPayment = require('../Model/FundWalletPayment');
+const { responsecodes } = require('../Constants/ResponseCodes');
 
 
 
@@ -8,7 +9,7 @@ const initialisePayment = async (userId, amount) => {
 
         // generate a unique reference
         const reference = uuid.v4();
-        const payment = await Payment.create({ user: userId, reference: reference, amount: amount, currency: 'NGN', });
+        const payment = await FundWalletPayment.create({ user: userId, reference: reference, amount: amount, currency: 'NGN', });
         return payment;
     } catch (error) {
         throw error;
@@ -18,32 +19,26 @@ const initialisePayment = async (userId, amount) => {
 
 const findPaymentByReference = async (reference) => {
     try {
-        const payment = await FundWalletPayment.findOne({ reference });
+        const payment = await FundWalletPayment.findOne({ reference: reference });
         if (!payment) {
-            console.log('No payment found with the provided reference');
-            return null;
+            return { code: responsecodes.INTERNAL_SERVER_ERROR, success: false, message: 'No payment found with the provided reference' };
         }
-        console.log('Payment found successfully');
-        return payment;
+        return { code: responsecodes.SUCCESS, success: true, message: 'Payment found successfully', data: payment };
     } catch (error) {
-        console.log('An error occurred while finding the payment', error);
-        return null;
+        return { code: responsecodes.INTERNAL_SERVER_ERROR, success: false, message: 'An error' + error + 'occurred while finding the payment' };
     }
 };
 
 
-const updatePaymentStatus = async (reference, status) => {
+const updatePaymentStatus = async (payment, status) => {
     try {
-        const payment = await findPaymentByReference(reference);
-        if (payment) {
-            payment.status = status;
-            await payment.save();
-            return { success: true, message: 'Payment status updated successfully' };
-        }
+        payment.status = status;
+        await payment.save();
+        return { success: true, message: 'Payment status updated successfully' };
     } catch (error) {
         console.log('An error occurred while updating the payment status', error);
         return null;
     }
 };
 
-module.exports = { initialisePayment, updatePaymentStatus };
+module.exports = { initialisePayment, updatePaymentStatus, findPaymentByReference };

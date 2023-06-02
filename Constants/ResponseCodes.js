@@ -9,9 +9,8 @@ exports.responsecodes = {
 }
 
 exports.paymentstatus = {
-    COMPLETE: 'complete',
+    COMPLETE: 'completed',
     PENDING: 'pending',
     FAILED: 'failed',
 }
-
 
