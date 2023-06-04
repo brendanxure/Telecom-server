@@ -19,6 +19,7 @@ const InitializePaystackPayment = async (req, res) => {
     const headers = {
         Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
     };
+    
     try {
         const response = await axios.post("https://api.paystack.co/transaction/initialize", form, { headers });
         res.status(responsecodes.SUCCESS).json(response.data);
