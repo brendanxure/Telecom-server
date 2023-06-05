@@ -84,12 +84,12 @@ const createWalletHistory = async (walletId, transactionType, amount) => {
     }
 }
 
-const findWalletHistory = async (walletId) => {
+const findWalletHistoryById = async (walletId) => {
     try {
-        const history = await WalletHistory.find({walletId: walletId})
+        const history = await WalletHistory.find({ walletId: walletId })
         return history
     } catch (error) {
         throw error
     }
 }
-module.exports = { createWallet, findWalletByUser, createWalletHistory, findWalletHistory, fundWallet, debitWallet };
+module.exports = { createWallet, findWalletByUser, createWalletHistory, findWalletHistoryById, fundWallet, debitWallet };
