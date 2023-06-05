@@ -83,4 +83,13 @@ const createWalletHistory = async (walletId, transactionType, amount) => {
         throw error;
     }
 }
-module.exports = { createWallet, findWalletByUser, createWalletHistory, fundWallet, debitWallet };
+
+const findWalletHistory = async (walletId) => {
+    try {
+        const history = await WalletHistory.find({walletId: walletId})
+        return history
+    } catch (error) {
+        throw error
+    }
+}
+module.exports = { createWallet, findWalletByUser, createWalletHistory, findWalletHistory, fundWallet, debitWallet };
