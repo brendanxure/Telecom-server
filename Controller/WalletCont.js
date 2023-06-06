@@ -5,7 +5,6 @@ const getWallet = async (req, res) => {
     console.log(req.user)
     try {
         const wallet = await findWalletByUser(req.user._id)
-
         res.status(responsecodes.SUCCESS).json(wallet);
     } catch (error) {
         res.status(responsecodes.BAD_REQUEST).json({ message: "Error occured", error });

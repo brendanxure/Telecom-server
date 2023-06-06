@@ -7,8 +7,6 @@ const fundWallet = async (req, res) => {
 
     const { amount } = req.body;
     const user = req.user;
-
-
     try {
         // Call the fundWallet method of WalletService
         const result = await walletService.fundWallet(user._id, amount);
