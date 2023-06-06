@@ -6,6 +6,8 @@ exports.responsecodes = {
     INTERNAL_SERVER_ERROR: 500,
     FORBIDDEN: 403,
     UNAUTHORIZED: 401,
+    DUPLICATE: 409,
+
 }
 
 exports.paymentstatus = {

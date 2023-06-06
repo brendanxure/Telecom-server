@@ -19,7 +19,7 @@ const InitializePaystackPayment = async (req, res) => {
     const headers = {
         Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
     };
-    
+
     try {
         const response = await axios.post("https://api.paystack.co/transaction/initialize", form, { headers });
         res.status(responsecodes.SUCCESS).json(response.data);
@@ -40,10 +40,11 @@ const VerifyPaystackPayment = async (req, res) => {
         if (response.data.data.status === 'success') {
             const verifyPayment = await paymentService.findPaymentByReference(reference)
             if (verifyPayment.success) {
+                if (verifyPayment.data.status === 'completed') {
+                    return res.status(responsecodes.DUPLICATE).json({ message: 'Transaction already completed ', success: true });
+                }
                 const payment = verifyPayment.data;
-
                 const result = await walletService.fundWallet(payment.user, payment.amount);
-
                 if (result.success) {
                     await paymentService.updatePaymentStatus(verifyPayment.data, paymentstatus.COMPLETE);
                     res.status(responsecodes.SUCCESS).json({ message: 'Transaction was successful', success: true });

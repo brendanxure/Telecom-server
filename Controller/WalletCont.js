@@ -2,9 +2,10 @@ const { responsecodes } = require("../Constants/ResponseCodes");
 const { findWalletByUser, findWalletHistoryById } = require("../Service/WalletService")
 
 const getWallet = async (req, res) => {
+    console.log(req.user)
     try {
         const wallet = await findWalletByUser(req.user._id)
-        console.log(response)
+
         res.status(responsecodes.SUCCESS).json(wallet);
     } catch (error) {
         res.status(responsecodes.BAD_REQUEST).json({ message: "Error occured", error });

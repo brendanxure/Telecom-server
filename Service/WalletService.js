@@ -34,9 +34,6 @@ const fundWallet = async (userId, amount) => {
         console.error('Error funding wallet:', error);
         return { success: false, message: 'Internal server error', code: responsecodes.INTERNAL_SERVER_ERROR };
     }
-
-
-
 }
 
 const debitWallet = async (userId, amount) => {

@@ -24,7 +24,8 @@ const validateToken = async (req, res, next) => {
             next()
 
         } catch (error) {
-            res.status(400).json('Not authorized')
+
+            res.status(400).json('Not authorized because ' + error)
         }
     }
 
