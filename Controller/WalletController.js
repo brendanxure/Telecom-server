@@ -1,6 +1,7 @@
 const Wallet = require('../Model/Wallet');
 const WalletHistory = require('../Model/WalletHistory');
 const walletService = require('../Service/WalletService')
+const {findWalletByUser, findWalletHistoryById} = require('../Service/WalletService')
 const { responsecodes } = require('../Constants/ResponseCodes')
 
 const fundWallet = async (req, res) => {
@@ -42,5 +43,15 @@ const debitWallet = async (req, res) => {
     }
 };
 
-module.exports = { fundWallet, debitWallet };
+const getWalletHistory = async (req, res) => {
+    try {
+        const wallet = await findWalletByUser(req.user._id)
+        const walletHistory = await findWalletHistoryById(wallet._id)
+        res.status(responsecodes.SUCCESS).json([...walletHistory.reverse()])
+    } catch (error) {
+        res.status(responsecodes.BAD_REQUEST).json({ message: "Error occured", error });
+    }
+}
+
+module.exports = { fundWallet, debitWallet, getWalletHistory };
 
