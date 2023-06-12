@@ -22,9 +22,9 @@ const InitializePaystackPayment = async (req, res) => {
 
     try {
         const response = await axios.post("https://api.paystack.co/transaction/initialize", form, { headers });
-        res.status(responsecodes.SUCCESS).json(response.data);
+        return res.status(responsecodes.SUCCESS).json(response.data);
     } catch (error) {
-        res.status(responsecodes.INTERNAL_SERVER_ERROR).json({ message: "Error occured", error });
+        return res.status(responsecodes.INTERNAL_SERVER_ERROR).json({ message: "Error occured", error });
     }
 };
 
@@ -36,7 +36,6 @@ const VerifyPaystackPayment = async (req, res) => {
     };
     try {
         const response = await axios.get(`https://api.paystack.co/transaction/verify/${reference}`, { headers });
-
         if (response.data.data.status === 'success') {
             const verifyPayment = await paymentService.findPaymentByReference(reference)
             if (verifyPayment.success) {
@@ -52,17 +51,17 @@ const VerifyPaystackPayment = async (req, res) => {
                 }
             }
             else {
-                res.status(payment.code).json({ message: payment.message });
+                return res.status(verifyPayment.code).json({ message: verifyPayment.message });
             }
 
         } else {
 
             await paymentService.updatePaymentStatus(verifyPayment.data, paymentstatus.FAILED)
-            res.status(responsecodes.BAD_REQUEST).json({ message: 'Transaction was not successful' });
+            return res.status(responsecodes.BAD_REQUEST).json({ message: 'Transaction was not successful' });
         }
 
     } catch (error) {
-        res.status(responsecodes.INTERNAL_SERVER_ERROR).json({ message: error, error });
+        return res.status(responsecodes.INTERNAL_SERVER_ERROR).json({ message: error, error });
     }
 };
 
