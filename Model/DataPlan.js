@@ -1,11 +1,6 @@
 const mongoose = require('mongoose')
 
 const DataPlanSchema = mongoose.Schema({
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true
-    },
     network: {
         type: String,
         enum: ["mtn", "glo", "9mobile", "airtel"],
@@ -34,8 +29,9 @@ const DataPlanSchema = mongoose.Schema({
         required: true
     },
 
-}, {
-   timestamps: true 
-})
+},
+    {
+        timestamps: true
+    })
 
 module.exports = mongoose.model('DataPlan', DataPlanSchema)
