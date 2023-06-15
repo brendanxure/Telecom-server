@@ -1,63 +1,76 @@
 const { responsecodes } = require("../Constants/ResponseCodes")
-const { BuyData } = require("../Service/DataPlanService")
+const { BuyData, CreateDataPlan, GetAllDataPlans, GetDataPlanByID, UpdateDataPlanByID, DeleteDataPlanByID } = require("../Service/DataPlanService")
 const { debitWallet } = require("../Service/WalletService")
 const DataPlan = require('../models/DataPlan'); //
 
 
-const Create = async (req, res) => {
-    try {
-        const newDataPlan = await DataPlan.create(req.body);
-        res.status(201).json(newDataPlan);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+const CreateDataPackage = async (req, res) => {
+    const { network, size, unit, duration, type, amount } = req.body
+    const newDataPlan = await CreateDataPlan( network, size, unit, duration, type, amount)
+    if (newDataPlan.success) {
+        res.status(newDataPlan.code).json(newDataPlan.data)
+    } else {
+        res.status(newDataPlan.code).json(newDataPlan.data)
     }
 }
 
-const Find = async (req, res) => {
-    try {
-        const dataPlans = await DataPlan.find();
-        res.json(dataPlans);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+const GetAllDataPackage = async (req, res) => {
+    const dataPlans = await GetAllDataPlans()
+    if (dataPlans.success) {
+        res.status(dataPlans.code).json(dataPlans.data)
+    } else {
+        res.status(dataPlans.code).json(dataPlans.data)
     }
 }
 
-const GetByID = async (req, res) => {
-    try {
-        const dataPlan = await DataPlan.findById(req.params.id);
-        if (!dataPlan) {
-            return res.status(404).json({ error: 'Data plan not found' });
-        }
-        res.json(dataPlan);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+const GetDataPackageByID = async (req, res) => {
+    const { id } = req.params
+    const dataPlan = await GetDataPlanByID(id)
+    if (dataPlan.success) {
+        res.status(dataPlan.code).json(dataPlan.data)
+    } else {
+        res.status(dataPlan.code).json(dataPlan.data)
     }
 }
 
-const Update = async (req, res) => {
-    try {
-        const dataPlan = await DataPlan.findByIdAndUpdate(req.params.id, req.body, {
-            new: true,
-        });
-        if (!dataPlan) {
-            return res.status(404).json({ error: 'Data plan not found' });
-        }
-        res.json(dataPlan);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+const UpdateDataPackageByID = async (req, res) => {
+    const { id } = req.params
+    const updateDataPlan = await UpdateDataPlanByID(id, req.body)
+    if (updateDataPlan.success) {
+        res.status(updateDataPlan.code).json(updateDataPlan.data)
+    } else {
+        res.status(updateDataPlan.code).json(updateDataPlan.data)
     }
+    // try {
+    //     const dataPlan = await DataPlan.findByIdAndUpdate(req.params.id, req.body, {
+    //         new: true,
+    //     });
+    //     if (!dataPlan) {
+    //         return res.status(404).json({ error: 'Data plan not found' });
+    //     }
+    //     res.json(dataPlan);
+    // } catch (error) {
+    //     res.status(500).json({ error: error.message });
+    // }
 }
 
-const Delete = async (req, res) => {
-    try {
-        const dataPlan = await DataPlan.findByIdAndDelete(req.params.id);
-        if (!dataPlan) {
-            return res.status(404).json({ error: 'Data plan not found' });
-        }
-        res.json({ message: 'Data plan deleted successfully' });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+const DeleteDataPackageByID = async (req, res) => {
+    const { id } = req.params
+    const dataPlan = await DeleteDataPlanByID(id)
+    if (dataPlan.success) {
+        res.status(dataPlan.code).json(dataPlan.data)
+    } else {
+        res.status(dataPlan.code).json(dataPlan.data)
     }
+    // try {
+    //     const dataPlan = await DataPlan.findByIdAndDelete(req.params.id);
+    //     if (!dataPlan) {
+    //         return res.status(404).json({ error: 'Data plan not found' });
+    //     }
+    //     res.json({ message: 'Data plan deleted successfully' });
+    // } catch (error) {
+    //     res.status(500).json({ error: error.message });
+    // }
 }
 
 const DataPackage = async (req, res) => {
@@ -81,4 +94,4 @@ const DataPackage = async (req, res) => {
     }
 }
 
-module.exports = { DataPackage, Create, Update, GetByID, Find, Delete }
+module.exports = { DataPackage, CreateDataPackage, UpdateDataPackageByID, GetDataPackageByID, GetAllDataPackage, Delete }
