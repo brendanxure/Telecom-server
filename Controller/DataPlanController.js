@@ -1,7 +1,7 @@
 const { responsecodes } = require("../Constants/ResponseCodes")
 const { BuyData, CreateDataPlan, GetAllDataPlans, GetDataPlanByID, UpdateDataPlanByID, DeleteDataPlanByID } = require("../Service/DataPlanService")
 const { debitWallet } = require("../Service/WalletService")
-const DataPlan = require('../models/DataPlan'); //
+
 
 
 const CreateDataPackage = async (req, res) => {
@@ -17,7 +17,7 @@ const CreateDataPackage = async (req, res) => {
 const GetAllDataPackage = async (req, res) => {
     const dataPlans = await GetAllDataPlans()
     if (dataPlans.success) {
-        res.status(dataPlans.code).json(dataPlans.data)
+        res.status(dataPlans.code).json([...dataPlans.data.reverse()])
     } else {
         res.status(dataPlans.code).json(dataPlans.data)
     }
@@ -94,4 +94,4 @@ const DataPackage = async (req, res) => {
     }
 }
 
-module.exports = { DataPackage, CreateDataPackage, UpdateDataPackageByID, GetDataPackageByID, GetAllDataPackage, Delete }
+module.exports = { DataPackage, CreateDataPackage, UpdateDataPackageByID, GetDataPackageByID, GetAllDataPackage, DeleteDataPackageByID}

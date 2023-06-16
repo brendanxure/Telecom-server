@@ -1,10 +1,14 @@
 const express = require('express')
-const { DataPackage } = require('../Controller/DataPlanController')
-const { validateToken } = require('../Middleware/UserAuth')
+const { GetAllDataPackage, CreateDataPackage, GetDataPackageByID, UpdateDataPackageByID, DeleteDataPackageByID } = require('../Controller/DataPlanController')
+const { validateTokenForAdmin } = require('../Middleware/UserAuth')
 
 const router = express.Router()
 
-router.use(validateToken)
-router.post(('/buy-data'), DataPackage)
+router.use(validateTokenForAdmin)
+router.post(('/create-dataplan'), CreateDataPackage)
+router.get(('/get-all-dataplan'), GetAllDataPackage)
+router.get(('/get-dataplan/:id'), GetDataPackageByID)
+router.put(('/update-dataplan/:id'), UpdateDataPackageByID)
+router.delete(('/delete-dataplan/:id'), DeleteDataPackageByID)
 
 module.exports = router

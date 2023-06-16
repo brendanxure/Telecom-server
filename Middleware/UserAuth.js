@@ -34,4 +34,14 @@ const validateToken = async (req, res, next) => {
     }
 }
 
-module.exports = { validateToken }
+const validateTokenForAdmin = (req, res, next) => {
+    validateToken(req, res, ()=> {
+        if (req.user.isAdmin) {
+            next()
+        } else {
+            res.status(401).json("You are not authorized, Not an admin")
+        }
+    })
+}
+
+module.exports = { validateToken, validateTokenForAdmin }
