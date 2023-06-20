@@ -3,10 +3,10 @@ const { BuyData, CreateDataPlan, GetAllDataPlans, GetDataPlanByID, UpdateDataPla
 const { debitWallet } = require("../Service/WalletService")
 
 
-
+//Create Data Plans
 const CreateDataPackage = async (req, res) => {
-    const { network, size, unit, duration, type, amount } = req.body
-    const newDataPlan = await CreateDataPlan( network, size, unit, duration, type, amount)
+    const { network, planId, planName, volume, unit, validity, type, amount } = req.body
+    const newDataPlan = await CreateDataPlan(  network, planId, planName, volume, unit, validity, type, amount )
     if (newDataPlan.success) {
         res.status(newDataPlan.code).json(newDataPlan.data)
     } else {
@@ -14,6 +14,7 @@ const CreateDataPackage = async (req, res) => {
     }
 }
 
+//Get All Data Plan
 const GetAllDataPackage = async (req, res) => {
     const dataPlans = await GetAllDataPlans()
     if (dataPlans.success) {
@@ -23,6 +24,8 @@ const GetAllDataPackage = async (req, res) => {
     }
 }
 
+
+//Get A Data Plan
 const GetDataPackageByID = async (req, res) => {
     const { id } = req.params
     const dataPlan = await GetDataPlanByID(id)
@@ -33,6 +36,7 @@ const GetDataPackageByID = async (req, res) => {
     }
 }
 
+// Update A Data Plan
 const UpdateDataPackageByID = async (req, res) => {
     const { id } = req.params
     const updateDataPlan = await UpdateDataPlanByID(id, req.body)
@@ -41,19 +45,9 @@ const UpdateDataPackageByID = async (req, res) => {
     } else {
         res.status(updateDataPlan.code).json(updateDataPlan.data)
     }
-    // try {
-    //     const dataPlan = await DataPlan.findByIdAndUpdate(req.params.id, req.body, {
-    //         new: true,
-    //     });
-    //     if (!dataPlan) {
-    //         return res.status(404).json({ error: 'Data plan not found' });
-    //     }
-    //     res.json(dataPlan);
-    // } catch (error) {
-    //     res.status(500).json({ error: error.message });
-    // }
 }
 
+//Delete A Data Plan
 const DeleteDataPackageByID = async (req, res) => {
     const { id } = req.params
     const dataPlan = await DeleteDataPlanByID(id)
@@ -62,21 +56,12 @@ const DeleteDataPackageByID = async (req, res) => {
     } else {
         res.status(dataPlan.code).json(dataPlan.data)
     }
-    // try {
-    //     const dataPlan = await DataPlan.findByIdAndDelete(req.params.id);
-    //     if (!dataPlan) {
-    //         return res.status(404).json({ error: 'Data plan not found' });
-    //     }
-    //     res.json({ message: 'Data plan deleted successfully' });
-    // } catch (error) {
-    //     res.status(500).json({ error: error.message });
-    // }
 }
 
 const DataPackage = async (req, res) => {
     const user = req.user
-    const { network, size, unit, duration, type, amount } = req.body
-    const dataPurchased = await BuyData(network, size, unit, duration, type, amount)
+    const {  network, planId, planName, volume, unit, validity, type, amount  } = req.body
+    const dataPurchased = await BuyData( network, planId, planName, volume, unit, validity, type, amount )
     if (dataPurchased.success) {
         // call the newtork api for data
 
