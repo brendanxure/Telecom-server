@@ -5,8 +5,8 @@ const { debitWallet } = require("../Service/WalletService")
 
 //Create Data Plans
 const CreateDataPackage = async (req, res) => {
-    const { network, planId, planName, volume, unit, validity, type, amount } = req.body
-    const newDataPlan = await CreateDataPlan(  network, planId, planName, volume, unit, validity, type, amount )
+    const { network, planName, planId, volume, unit, validity, type, amount } = req.body
+    const newDataPlan = await CreateDataPlan(  network, planName, planId, volume, unit, validity, type, amount )
     if (newDataPlan.success) {
         res.status(newDataPlan.code).json(newDataPlan.data)
     } else {
@@ -60,8 +60,8 @@ const DeleteDataPackageByID = async (req, res) => {
 
 const DataPackage = async (req, res) => {
     const user = req.user
-    const {  network, planId, planName, volume, unit, validity, type, amount  } = req.body
-    const dataPurchased = await BuyData( network, planId, planName, volume, unit, validity, type, amount )
+    const {  network, planName, planId, volume, unit, validity, type, amount  } = req.body
+    const dataPurchased = await BuyData( network,  planName, planId, volume, unit, validity, type, amount )
     if (dataPurchased.success) {
         // call the newtork api for data
 

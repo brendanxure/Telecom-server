@@ -6,12 +6,12 @@ const DataPlanSchema = mongoose.Schema({
         enum: ["mtn", "glo", "9mobile", "airtel"],
         required: true
     },
-    planId: {
-        type: Number,
-        required: true
-    },
     planName: {
         type: String,
+        required: true
+    },
+    planId: {
+        type: Number,
         required: true
     },
     volume: {
