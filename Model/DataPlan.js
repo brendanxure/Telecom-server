@@ -6,7 +6,15 @@ const DataPlanSchema = mongoose.Schema({
         enum: ["mtn", "glo", "9mobile", "airtel"],
         required: true
     },
-    size: {
+    planName: {
+        type: String,
+        required: true
+    },
+    planId: {
+        type: Number,
+        required: true
+    },
+    volume: {
         type: Number,
         required: true
     },
@@ -15,7 +23,7 @@ const DataPlanSchema = mongoose.Schema({
         enum: ["mb", "gb"],
         required: true
     },
-    duration: {
+    validity: {
         type: Number,
         required: true
     },
