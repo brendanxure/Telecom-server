@@ -41,17 +41,7 @@ const UpdateDataPackageByID = async (req, res) => {
     } else {
         res.status(updateDataPlan.code).json(updateDataPlan.data)
     }
-    // try {
-    //     const dataPlan = await DataPlan.findByIdAndUpdate(req.params.id, req.body, {
-    //         new: true,
-    //     });
-    //     if (!dataPlan) {
-    //         return res.status(404).json({ error: 'Data plan not found' });
-    //     }
-    //     res.json(dataPlan);
-    // } catch (error) {
-    //     res.status(500).json({ error: error.message });
-    // }
+  
 }
 
 const DeleteDataPackageByID = async (req, res) => {
@@ -62,15 +52,7 @@ const DeleteDataPackageByID = async (req, res) => {
     } else {
         res.status(dataPlan.code).json(dataPlan.data)
     }
-    // try {
-    //     const dataPlan = await DataPlan.findByIdAndDelete(req.params.id);
-    //     if (!dataPlan) {
-    //         return res.status(404).json({ error: 'Data plan not found' });
-    //     }
-    //     res.json({ message: 'Data plan deleted successfully' });
-    // } catch (error) {
-    //     res.status(500).json({ error: error.message });
-    // }
+   
 }
 
 const DataPackage = async (req, res) => {
