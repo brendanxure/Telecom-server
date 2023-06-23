@@ -53,5 +53,15 @@ const getWalletHistory = async (req, res) => {
     }
 }
 
+// const getSumWalletHistory = async (req, res)=> {
+//     try {
+//         const wallet = await findWalletByUser(req.user._id)
+//         const walletHistory = await walletService.sumWalletHistory(wallet._id)
+//         res.status(responsecodes.SUCCESS).json(walletHistory)
+//     } catch (error) {
+//         res.status(responsecodes.BAD_REQUEST).json({ message: "Error occured", error });
+//     }
+// }
+
 module.exports = { fundWallet, debitWallet, getWalletHistory };
 
