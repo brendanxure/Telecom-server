@@ -14,7 +14,6 @@ const validateToken = async (req, res, next) => {
             // Verify AccessToken
             const decoded = jwt.verify(accessToken, process.env.JWT_SECRET, (err, res)=> {
                 if (err) {
-                    console.log(err)
                     return 'token expired'
                 }
                 return res
