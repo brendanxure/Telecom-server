@@ -12,7 +12,17 @@ const validateToken = async (req, res, next) => {
             accessToken = authHeader.split(' ')[1]
 
             // Verify AccessToken
-            const decoded = jwt.verify(accessToken, process.env.JWT_SECRET)
+            const decoded = jwt.verify(accessToken, process.env.JWT_SECRET, (err, res)=> {
+                if (err) {
+                    return 'token expired'
+                }
+                return res
+            })
+
+            //if token has expired
+            if (decoded === 'token expired') {
+                res.status(401).json("token expired")
+            }
 
             // Get User from the AccessToken
             const user = await User.findById(decoded.id).select('-password')

@@ -89,4 +89,20 @@ const findWalletHistoryById = async (walletId) => {
         throw error
     }
 }
-module.exports = { createWallet, findWalletByUser, createWalletHistory, findWalletHistoryById, fundWallet, debitWallet };
+
+const sumWalletHistory = async (walletId) => {
+    try {
+        const data = await WalletHistory.aggregate([
+            {$match : { walletId : walletId }},
+            {$group: {
+                _id: '$walletId',
+                total: {$sum: 1}
+            }}
+        ])
+        return data
+    } catch (error) {
+        throw error
+    }
+}
+
+module.exports = { createWallet, findWalletByUser, createWalletHistory, findWalletHistoryById, fundWallet, debitWallet, sumWalletHistory };
