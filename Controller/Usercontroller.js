@@ -107,7 +107,7 @@ const Login = async (req, res) => {
 }
 
 const generateToken = (id, admin) => {
-    return jwt.sign({ id, admin }, process.env.JWT_SECRET, { expiresIn: '2d' })
+    return jwt.sign({ id, admin }, process.env.JWT_SECRET, { expiresIn: 6000 })
 }
 
 module.exports = {
