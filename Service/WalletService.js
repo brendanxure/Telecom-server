@@ -116,7 +116,7 @@ const findWalletHistories = async () => {
         const histories = await WalletHistory.find()
         return {code: responsecodes.SUCCESS, success: true, data: histories}
     } catch (error) {
-        throw {code: responsecodes.INTERNAL_SERVER_ERROR, success: false, data: error}
+        return {code: responsecodes.INTERNAL_SERVER_ERROR, success: false, data: error}
     }
 }
 
