@@ -22,10 +22,6 @@ const GloDataResponseLogSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    volume: {
-        type: Number,
-        required: true
-    },
     expire: {
         type: Date,
         required: true

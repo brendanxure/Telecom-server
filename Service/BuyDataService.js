@@ -4,11 +4,14 @@ const GloDataResponseLog = require('../Model/GloDataResponseLog');
 const { responsecodes } = require('../Constants/ResponseCodes');
 
 const initialiseGloBuyData = async (userId, amount, msisdn, dataplanId) => {
+    console.log("create")
     try {
-        const transId = uuid.v4();
+        const ud = uuid.v4();
+        const transId = ud.replace(/-/g, '').substring(0, 18);
         const buydata = await BuyData.create({ user: userId, dataPlan: dataplanId, transactionId: transId, amount: amount, msisdn: msisdn });
         return buydata;
     } catch (error) {
+        console.log(error)
         throw error;
     }
 };
@@ -17,19 +20,21 @@ const updateBuyDataStatus = async (buydata, status) => {
     try {
         buydata.status = status;
         await buydata.save();
-        return { success: true, message: 'Buy Data status updated successfully' };
+        return { success: true, message: 'Buy Data status updated successfully', status: status };
     } catch (error) {
         console.log('An error occurred while updating the buy data status', error);
-        return null;
+        return { success: false, message: 'An error occurred while updating the buy data status  due to ' + error };
     }
 };
 
 const createGloDataResponseLog = async (data) => {
     try {
         const responseLog = await GloDataResponseLog.create(data);
-        return responseLog;
+        return { data: responseLog, message: 'Response Log created sucessfully' };
     } catch (error) {
-        throw new Error('Failed to create GloDataResponseLog');
+        console.log('Failed to create GloDataResponseLog', error);
+        return { success: false, message: 'Failed to create GloDataResponseLog due to ' + error };
+
     }
 }
 
