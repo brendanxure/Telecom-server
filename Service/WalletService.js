@@ -84,9 +84,12 @@ const createWalletHistory = async (walletId, transactionType, amount) => {
 const findWalletHistoryById = async (walletId) => {
     try {
         const history = await WalletHistory.find({ walletId: walletId })
-        return history
+        if(!history){
+            return {code: responsecodes.NOT_FOUND, success: false, data: {Errormessage: 'No History'}} 
+        }
+        return {code: responsecodes.SUCCESS, success: true, data: history}
     } catch (error) {
-        throw error
+        throw {code: responsecodes.INTERNAL_SERVER_ERROR, success: false, data: error}
     }
 }
 
@@ -99,10 +102,24 @@ const sumWalletHistory = async (walletId) => {
                 total: {$sum: 1}
             }}
         ])
-        return data
+        if(!data){
+            return {code: responsecodes.NOT_FOUND, success: false, data: {Errormessage: 'No Transactions'}}
+        }
+        return {code: responsecodes.SUCCESS, success: true, data: data}
     } catch (error) {
-        throw error
+        throw {code: responsecodes.INTERNAL_SERVER_ERROR, success: false, data: error}
     }
 }
 
-module.exports = { createWallet, findWalletByUser, createWalletHistory, findWalletHistoryById, fundWallet, debitWallet, sumWalletHistory };
+const findWalletHistories = async () => {
+    try {
+        const histories = await WalletHistory.find()
+        return {code: responsecodes.SUCCESS, success: true, data: histories}
+    } catch (error) {
+        return {code: responsecodes.INTERNAL_SERVER_ERROR, success: false, data: error}
+    }
+}
+
+
+
+module.exports = { createWallet, findWalletByUser, createWalletHistory, findWalletHistoryById, fundWallet, debitWallet, sumWalletHistory, findWalletHistories };
