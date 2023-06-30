@@ -5,77 +5,81 @@ const { responsecodes, transactionstatus } = require("../Constants/ResponseCodes
 
 
 const BuyDataPlan = async (req, res) => {
+    try {
+        const { amount, msisdn, dataplanId, planId } = req.body
+        const user = req.user
+        const buyData = await buyDataService.initialiseGloBuyData(user._id, amount, msisdn, dataplanId);
 
-    const { amount, msisdn, dataplanId, planId } = req.body
-    const user = req.user
-    const buyData = await buyDataService.initialiseGloBuyData(user._id, amount, msisdn, dataplanId)
-    const headers = {
-        'x-api-key': process.env.GLO_API_KEY,
-        'Content-Type': 'application/json'
+        const transId = buyData.transactionId;
+        const bucketId = 23;
+        const quantity = 1;
+        const ignoresms = false;
+        const sponsorId = process.env.GLO_SPONSOR_ID;
+        const headers = {
+            'x-api-key': process.env.GLO_API_KEY,
+            'Content-Type': 'application/json'
+        }
+
+        const response = await axios.post('https://gift-api.gloworld.com', { transId, msisdn, bucketId, planId, sponsorId, quantity, ignoresms }, { headers });
+        console.log(" response" + JSON.stringify(response.data))
+        const { status, resultCode, egmstransId, expire, balance, message } = response.data;
+
+        console.log('tId' + response.data.transId);
+        const rTransId = response.data.transId
+        const rQuantity = response.data.quantity
+
+        if (status === 'ok') {
+            console.log("ok")
+
+            const updateWalletBalance = await debitWallet(user._id, amount);
+            if (updateWalletBalance.success) {
+                if (resultCode === "0000") {
+                    const verifyPurchase = await buyDataService.findByTransactionId(rTransId);
+                    if (verifyPurchase.success) {
+                        const dataUpdate = await buyDataService.updateBuyDataStatus(verifyPurchase.data, transactionstatus.COMPLETE);
+                        const responseLog = await createResponseLog(buyData, status, resultCode, egmstransId, rTransId, expire, balance, rQuantity, message);
+                        return res.status(responsecodes.SUCCESS).json({ message: 'Data Purchased Successfully', walletBalance: updateWalletBalance.wallet?.balance, update: dataUpdate, gloresponseLog: responseLog })
+                    }
+                }
+                else if (resultCode === "0002") {
+                    const dataUpdate = await buyDataService.updateBuyDataStatus(verifyPurchase.data, transactionstatus.PROCESSING);
+                    const responseLog = await createResponseLog(buyData, status, resultCode, egmstransId, rTransId, expire, balance, rQuantity, message);
+                    return res.status(responsecodes.SUCCESS).json({ message: message, walletBalance: updateWalletBalance.wallet?.balance, update: dataUpdate, gloresponseLog: responseLog })
+                }
+            }
+            else {
+                const responseLog = await createResponseLog(buyData, status, resultCode, egmstransId, rTransId, expire, balance, quantrQuantityity, message);
+                return res.status(updateWalletBalance.code).json({ message: updateWalletBalance.message, gloresponseLog: responseLog })
+            }
+        }
+        else if (status === "error") {
+            console.log("here error failed ")
+            const dataUpdate = await buyDataService.updateBuyDataStatus(verifyPurchase.data, transactionstatus.FAILED);
+            const responseLog = await createResponseLog(buyData, status, resultCode, egmstransId, rTransId, expire, balance, rQuantity, message);
+            return res.status(responsecodes.INTERNAL_SERVER_ERROR).json({ message: message, update: dataUpdate, gloresponseLog: responseLog })
+
+        }
+    } catch (error) {
+        return res.status(responsecodes.INTERNAL_SERVER_ERROR).json({ success: false, message: 'An error occurred while buying data due to ' + error });
     }
-    const request = {
-        transId: buyData.transactionId,
-        msisdn: msisdn,
-        bucketId: 23,
-        planId: planId,
-        sponsorId: process.env.GLO_SPONSOR_ID,
-        quantity: 1,
-        ignoresms: false
-    }
 
-    const response = await axios.post('https://gift-api.gloworld.com', { request }, { headers });
-    console.log(" response" + response)
-    console.log(" response" + response.data)
 
-    const { status, resultCode, egmstransId, transId, volume, expire, balance, quantity, message } = response.data;
+};
 
-    console.log("status" + status)
+module.exports = { BuyDataPlan }
 
-    // Save Response to Reponse Log
+async function createResponseLog(buyData, status, resultCode, egmstransId, transId, expire, balance, quantity, message) {
     const responseData = {
         buyData: buyData._id,
         status: status,
         resultCode: resultCode,
         egmstransId: egmstransId,
         transId: transId,
-        volume: volume,
         expire: expire,
         balance: balance,
         quantity: quantity,
         message: message
     };
     await buyDataService.createGloDataResponseLog(responseData);
-    console.log("here")
-
-    if (status === 'ok') {
-        console.log("ok")
-
-        const updateWalletBalance = await debitWallet(user._id, amount);
-        if (updateWalletBalance.success) {
-            if (resultCode === "0000") {
-                const verifyPurchase = await buyDataService.findByTransactionId(transId);
-                if (verifyPurchase.success) {
-                    await buyDataService.updateBuyDataStatus(verifyPurchase.data, transactionstatus.COMPLETE);
-                    return res.status(responsecodes.SUCCESS).json({ message: 'Data Purchased Successfully', walletBalance: updateWalletBalance.wallet?.balance })
-                }
-            }
-            else if (resultCode === "0002") {
-                await buyDataService.updateBuyDataStatus(verifyPurchase.data, transactionstatus.PROCESSING);
-                return res.status(responsecodes.SUCCESS).json({ message: message, walletBalance: updateWalletBalance.wallet?.balance })
-            }
-        }
-        else {
-            res.status(updateWalletBalance.code).json({ message: updateWalletBalance.message })
-        }
-    }
-    else if (status === "error") {
-        console.log("here error failed ")
-        await buyDataService.updateBuyDataStatus(verifyPurchase.data, transactionstatus.FAILED);
-        return res.status(responsecodes.INTERNAL_SERVER_ERROR).json({ message: message })
-
-    }
-
-};
-
-module.exports = { BuyDataPlan }
+}
 
