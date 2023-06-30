@@ -1,12 +1,11 @@
-const { responsecodes } = require("../Constants/ResponseCodes")
-const { BuyData, CreateDataPlan, GetAllDataPlans, GetDataPlanByID, UpdateDataPlanByID, DeleteDataPlanByID } = require("../Service/DataPlanService")
-const { debitWallet } = require("../Service/WalletService")
+const {  CreateDataPlan, GetAllDataPlans, GetDataPlanByID, UpdateDataPlanByID, DeleteDataPlanByID } = require("../Service/DataPlanService")
+
 
 
 //Create Data Plans
 const CreateDataPackage = async (req, res) => {
     const { network, planName, planId, volume, unit, validity, type, amount } = req.body
-    const newDataPlan = await CreateDataPlan(  network, planName, planId, volume, unit, validity, type, amount )
+    const newDataPlan = await CreateDataPlan(network, planName, planId, volume, unit, validity, type, amount)
     if (newDataPlan.success) {
         res.status(newDataPlan.code).json(newDataPlan.data)
     } else {
@@ -58,25 +57,6 @@ const DeleteDataPackageByID = async (req, res) => {
     }
 }
 
-const DataPackage = async (req, res) => {
-    const user = req.user
-    const {  network, planName, planId, volume, unit, validity, type, amount  } = req.body
-    const dataPurchased = await BuyData( network,  planName, planId, volume, unit, validity, type, amount )
-    if (dataPurchased.success) {
-        // call the newtork api for data
 
-        //if api to get data was successful
-        if (true) {
-            const updateWalletBalance = await debitWallet(user._id, amount)
-            if (updateWalletBalance.success) {
-                res.status(updateWalletBalance.code).json({ message: 'Data Bought Successfully', walletBalance: updateWalletBalance.wallet?.balance })
-            } else {
-                res.status(updateWalletBalance.code).json({ message: updateWalletBalance.message })
-            }
-        }
-    } else {
-        return res.status(dataPurchased.code).json({ message: dataPurchased.message, error: dataPurchased.data })
-    }
-}
 
-module.exports = { DataPackage, CreateDataPackage, UpdateDataPackageByID, GetDataPackageByID, GetAllDataPackage, DeleteDataPackageByID}
+module.exports = {  CreateDataPackage, UpdateDataPackageByID, GetDataPackageByID, GetAllDataPackage, DeleteDataPackageByID }

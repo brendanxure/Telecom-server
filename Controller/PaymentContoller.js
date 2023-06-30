@@ -8,7 +8,6 @@ const InitializePaystackPayment = async (req, res) => {
     const { amount } = req.body;
     const user = req.user;
     const payment = await paymentService.initialisePayment(user._id, amount);
-    console.log(' ref ' + payment.reference)
     const form = {
         email: user.email,
         amount: amount * 100,
@@ -46,8 +45,7 @@ const VerifyPaystackPayment = async (req, res) => {
                 const result = await walletService.fundWallet(payment.user, payment.amount);
                 if (result.success) {
                     await paymentService.updatePaymentStatus(verifyPayment.data, paymentstatus.COMPLETE);
-                    res.status(responsecodes.SUCCESS).json({ message: 'Transaction was successful', success: true, walletbalance: result.wallet?.balance });
-                    console.log(res.statusCode)
+                    return res.status(responsecodes.SUCCESS).json({ message: 'Transaction was successful', success: true, walletbalance: result.wallet?.balance });
                 }
             }
             else {

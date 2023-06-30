@@ -16,3 +16,9 @@ exports.paymentstatus = {
     FAILED: 'failed',
 }
 
+exports.transactionstatus = {
+    COMPLETE: 'completed',
+    PENDING: 'pending',
+    FAILED: 'failed',
+    PROCESSING: 'processing',
+}
