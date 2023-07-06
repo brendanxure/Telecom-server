@@ -4,7 +4,6 @@ const GloDataResponseLog = require('../Model/GloDataResponseLog');
 const { responsecodes } = require('../Constants/ResponseCodes');
 
 const initialiseGloBuyData = async (userId, amount, msisdn, dataplanId) => {
-    console.log("create")
     try {
         const ud = uuid.v4();
         const transId = ud.replace(/-/g, '').substring(0, 18);
