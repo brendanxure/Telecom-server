@@ -42,11 +42,12 @@ const BuyDataPlan = async (req, res) => {
                     }
                 }
                 else if (resultCode === "0002") {
+                    const verifyPurchase = await buyDataService.findByTransactionId(rTransId)
                     const dataUpdate = await buyDataService.updateBuyDataStatus(verifyPurchase.data, transactionstatus.PROCESSING);
                     const responseLog = await createResponseLog(buyData, status, resultCode, egmstransId, rTransId, expire, balance, rQuantity, message);
                     return res.status(responsecodes.SUCCESS).json({ message: message, walletBalance: updateWalletBalance.wallet?.balance, update: dataUpdate, gloresponseLog: responseLog })
                 }
-            }
+            } // the admin has to know that the user wallet wasnt debited but data was given
             else {
                 const responseLog = await createResponseLog(buyData, status, resultCode, egmstransId, rTransId, expire, balance, quantrQuantityity, message);
                 return res.status(updateWalletBalance.code).json({ message: updateWalletBalance.message, gloresponseLog: responseLog })
@@ -54,12 +55,16 @@ const BuyDataPlan = async (req, res) => {
         }
         else if (status === "error") {
             console.log("here error failed ")
+            const verifyPurchase = await buyDataService.findByTransactionId(rTransId)
             const dataUpdate = await buyDataService.updateBuyDataStatus(verifyPurchase.data, transactionstatus.FAILED);
             const responseLog = await createResponseLog(buyData, status, resultCode, egmstransId, rTransId, expire, balance, rQuantity, message);
             return res.status(responsecodes.INTERNAL_SERVER_ERROR).json({ message: message, update: dataUpdate, gloresponseLog: responseLog })
 
         }
     } catch (error) {
+        if (error.response) {
+            return res.status(responsecodes.INTERNAL_SERVER_ERROR).json({success: false, message: 'An error occurred while buying data due to ' + error.response.message })
+        }
         return res.status(responsecodes.INTERNAL_SERVER_ERROR).json({ success: false, message: 'An error occurred while buying data due to ' + error });
     }
 
