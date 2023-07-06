@@ -13,7 +13,7 @@ const InitializePaystackPayment = async (req, res) => {
         amount: amount * 100,
         currency: "NGN",
         reference: payment.reference,
-        callback_url: "http://localhost:3000/admin/fundwallet"
+        callback_url: "http://localhost:3000/admin/fund-wallet"
     };
     const headers = {
         Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
