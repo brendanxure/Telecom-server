@@ -1,3 +1,4 @@
+const { responsecodes } = require("../Constants/ResponseCodes")
 const {  CreateDataPlan, GetAllDataPlans, GetDataPlanByID, UpdateDataPlanByID, DeleteDataPlanByID } = require("../Service/DataPlanService")
 
 
@@ -5,6 +6,39 @@ const {  CreateDataPlan, GetAllDataPlans, GetDataPlanByID, UpdateDataPlanByID, D
 //Create Data Plans
 const CreateDataPackage = async (req, res) => {
     const { network, planName, planId, volume, unit, validity, type, amount } = req.body
+
+    if(!network) {
+        res.status(responsecodes.BAD_REQUEST).json('Please Input network')
+    }
+
+    if(!planName) {
+        res.status(responsecodes.BAD_REQUEST).json('Please Input planName')
+    }
+
+    if(!planId) {
+        res.status(responsecodes.BAD_REQUEST).json('Please Input planId')
+    }
+
+    if(!volume) {
+        res.status(responsecodes.BAD_REQUEST).json('Please Input volume')
+    }
+
+    if(!unit) {
+        res.status(responsecodes.BAD_REQUEST).json('Please Input unit')
+    }
+
+    if(!validity) {
+        res.status(responsecodes.BAD_REQUEST).json('Please Input validity')
+    }
+
+    if(!type) {
+        res.status(responsecodes.BAD_REQUEST).json('Please Input type')
+    }
+
+    if(!amount) {
+        res.status(responsecodes.BAD_REQUEST).json('Please Input amount')
+    }
+    
     const newDataPlan = await CreateDataPlan(network, planName, planId, volume, unit, validity, type, amount)
     if (newDataPlan.success) {
         res.status(newDataPlan.code).json(newDataPlan.data)
