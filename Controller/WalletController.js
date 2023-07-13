@@ -66,6 +66,24 @@ const getAllWalletHistories = async (req, res) => {
         }
 }
 
+const getAllWallet = async(req, res) => {
+    try {
+        const allWallet = await walletService.findAllWallet()
+        if(allWallet.success){
+            res.status(allWallet.code).json(allWallet.data)
+        } else {
+            res.status(allWallet.code).json(allWallet.data)
+        }
+    } catch (error) {
+        if(error.data){
+            res.status(error.code).json(error.data)
+        } else{
+            res.status(responsecodes.INTERNAL_SERVER_ERROR).json(error)
+        }
+
+    }
+}
+
 
 // const getSumWalletHistory = async (req, res)=> {
 //     try {
@@ -77,5 +95,5 @@ const getAllWalletHistories = async (req, res) => {
 //     }
 // }
 
-module.exports = { fundWallet, debitWallet, getWalletHistory, getAllWalletHistories };
+module.exports = { fundWallet, debitWallet, getWalletHistory, getAllWalletHistories, getAllWallet };
 

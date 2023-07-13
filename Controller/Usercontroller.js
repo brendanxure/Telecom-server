@@ -3,6 +3,7 @@ const User = require('../Model/User')
 const jwt = require('jsonwebtoken')
 const walletService = require('../Service/WalletService')
 const { json } = require('express')
+const { responsecodes } = require('../Constants/ResponseCodes')
 
 //SIGN UP/REGISTER/CREATE A NEW ACCOUNT
 
@@ -110,6 +111,19 @@ const generateToken = (id, admin) => {
     return jwt.sign({ id, admin }, process.env.JWT_SECRET, { expiresIn: 3600 })
 }
 
+
+//get all user
+const getAllUser = async(req, res) => {
+    try {
+        const allUsers = await User.find()
+        if(!allUsers) {
+            res.status(responsecodes.NOT_FOUND).json('No user found')
+        }
+        res.status(responsecodes.SUCCESS).json(allUsers)
+    } catch (error) {
+        res.status(responsecodes.INTERNAL_SERVER_ERROR).json(error)
+    }
+}
 module.exports = {
-    Register, Login
+    Register, Login, getAllUser
 }

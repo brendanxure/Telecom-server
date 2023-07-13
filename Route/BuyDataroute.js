@@ -1,12 +1,12 @@
 const express = require('express');
-const { BuyDataPlan } = require('../Controller/BuyDataContoller');
+const { BuyDataPlan, getAllGloDataTransactions } = require('../Controller/BuyDataContoller');
 const { dataTransactionByUser, dataTransactionByUserByDates } = require('../Controller/DataTransactionController');
-const { validateToken } = require('../Middleware/UserAuth')
+const { validateToken, validateTokenForAdmin } = require('../Middleware/UserAuth')
 const router = express.Router()
 
-router.use(validateToken);
-router.post(('/buy-data'), BuyDataPlan)
-router.get(('/get-data-transactions'), dataTransactionByUser)
-router.post('/data-transactions-by-dates', dataTransactionByUserByDates)
+router.post(('/buy-data'), validateToken, BuyDataPlan)
+router.get(('/get-data-transactions'), validateToken, dataTransactionByUser)
+router.post('/data-transactions-by-dates',validateToken, dataTransactionByUserByDates)
+router.get(('/get-all-glo-data-transactions'), validateTokenForAdmin, getAllGloDataTransactions)
 
 module.exports = router

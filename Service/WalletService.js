@@ -120,6 +120,18 @@ const findWalletHistories = async () => {
     }
 }
 
+const findAllWallet = async() => {
+    try {
+        const AllWallet = await Wallet.find()
+        if(!AllWallet){
+            return {code: responsecodes.NOT_FOUND, success: false, data: "No Wallet Found"}
+        }
+        return {code: responsecodes.SUCCESS, success: true, data: AllWallet}
+    } catch (error) {
+        return {code: responsecodes.INTERNAL_SERVER_ERROR, success: false, data: error}
+    }
+}
 
 
-module.exports = { createWallet, findWalletByUser, createWalletHistory, findWalletHistoryById, fundWallet, debitWallet, sumWalletHistory, findWalletHistories };
+
+module.exports = { createWallet, findWalletByUser, createWalletHistory, findWalletHistoryById, fundWallet, debitWallet, sumWalletHistory, findWalletHistories, findAllWallet };
