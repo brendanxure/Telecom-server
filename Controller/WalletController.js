@@ -48,7 +48,7 @@ const getWalletHistory = async (req, res) => {
         const wallet = await findWalletByUser(req.user._id)
         const walletHistory = await findWalletHistoryById(wallet._id)
         if(walletHistory.success){
-            res.status(responsecodes.SUCCESS).json([...walletHistory.data.reverse()])
+            res.status(responsecodes.SUCCESS).json(walletHistory.data.reverse())
         } else {
             res.status(walletHistory.code).json(walletHistory.data)
         }
@@ -60,7 +60,7 @@ const getWalletHistory = async (req, res) => {
 const getAllWalletHistories = async (req, res) => {
         const histories = await findWalletHistories()
         if(histories.success){
-            res.status(histories.code).json(histories.data)
+            res.status(histories.code).json(histories.data.reverse())
         } else {
             res.status(histories.code).json(histories.data)
         }

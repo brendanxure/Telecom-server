@@ -49,17 +49,7 @@ const findByTransactionId = async (transactionId) => {
     }
 };
 
-const findAllGloDataTransactions = async () => {
-    try {
-        const gloDataTransactions = await BuyData.find()
-        if(!gloDataTransactions){
-            return {code: responsecodes.NOT_FOUND, success: false, message: 'No glo data transaction found'}
-        }
-        return {code: responsecodes.SUCCESS, success: true, message: 'Glo Data transaction found successfully', data: gloDataTransactions}
-    } catch (error) {
-        return {code: responsecodes.INTERNAL_SERVER_ERROR, success: false, message: 'An error' + error + 'occured while find Glo Data transactions'}
-    }
-}
 
 
-module.exports = { initialiseGloBuyData, updateBuyDataStatus, createGloDataResponseLog, findByTransactionId, findAllGloDataTransactions }
+
+module.exports = { initialiseGloBuyData, updateBuyDataStatus, createGloDataResponseLog, findByTransactionId}

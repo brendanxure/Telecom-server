@@ -1,6 +1,6 @@
 const express = require('express');
-const { BuyDataPlan, getAllGloDataTransactions } = require('../Controller/BuyDataContoller');
-const { dataTransactionByUser, dataTransactionByUserByDates } = require('../Controller/DataTransactionController');
+const { BuyDataPlan} = require('../Controller/BuyDataContoller');
+const { dataTransactionByUser, dataTransactionByUserByDates, getAllGloDataTransactions } = require('../Controller/DataTransactionController');
 const { validateToken, validateTokenForAdmin } = require('../Middleware/UserAuth')
 const router = express.Router()
 

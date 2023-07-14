@@ -1,5 +1,5 @@
 const { responsecodes } = require("../Constants/ResponseCodes")
-const { findDataTransactionByUser, findDataTransactionByUserByDates } = require("../Service/DataTransactionService")
+const { findDataTransactionByUser, findDataTransactionByUserByDates, findAllGloDataTransactions } = require("../Service/DataTransactionService")
 
 //get Data Transactions for user
 const dataTransactionByUser = async(req, res) => {
@@ -33,4 +33,23 @@ const dataTransactionByUserByDates = async(req, res) => {
     res.status(dataTransaction.code).json(dataTransaction.data)
 }
 
-module.exports = {dataTransactionByUser, dataTransactionByUserByDates}
+//get all glo Data transaction
+const getAllGloDataTransactions = async(req, res)=> {
+    try {
+        const gloDataTransactions = await findAllGloDataTransactions()
+        if(gloDataTransactions.success){
+            res.status(gloDataTransactions.code).json(gloDataTransactions.data.reverse())
+        } else {
+            res.status(gloDataTransactions.code).json(gloDataTransactions.message)
+        }
+    } catch (error) {
+        if(error.message){
+            res.status(error.code).json(error.message)
+        }else {
+            res.status(responsecodes.INTERNAL_SERVER_ERROR).json(error)
+        }
+        
+    }
+}
+
+module.exports = {dataTransactionByUser, dataTransactionByUserByDates, getAllGloDataTransactions }

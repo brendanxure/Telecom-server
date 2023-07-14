@@ -1,6 +1,5 @@
 const axios = require('axios')
 const { debitWallet } = require("../Service/WalletService")
-const buyDataService = require("../Service/BuyDataService")
 const { responsecodes, transactionstatus } = require("../Constants/ResponseCodes")
 
 
@@ -71,26 +70,9 @@ const BuyDataPlan = async (req, res) => {
 
 };
 
-//get all glo Data transaction
-const getAllGloDataTransactions = async(req, res)=> {
-    try {
-        const gloDataTransactions = await buyDataService.findAllGloDataTransactions()
-        if(gloDataTransactions.success){
-            res.status(gloDataTransactions.code).json(gloDataTransactions.data)
-        } else {
-            res.status(gloDataTransactions.code).json(gloDataTransactions.message)
-        }
-    } catch (error) {
-        if(error.message){
-            res.status(error.code).json(error.message)
-        }else {
-            res.status(responsecodes.INTERNAL_SERVER_ERROR).json(error)
-        }
-        
-    }
-}
 
-module.exports = { BuyDataPlan, getAllGloDataTransactions }
+
+module.exports = { BuyDataPlan, }
 
 async function createResponseLog(buyData, status, resultCode, egmstransId, transId, expire, balance, quantity, message) {
     const responseData = {
